@@ -1,0 +1,103 @@
+﻿Dokumentáció linkek:
+https://developer.android.com/reference/android/database/sqlite/SQLiteDatabase
+https://developer.android.com/reference/android/database/sqlite/SQLiteOpenHelper
+
+Mintakód a TanulokDBhelper.java fájlban található
+
+DDL műveletek:
+	az adatbázis execSql függvényét hívjuk meg
+	paraméterül a teljes sql lekérdezést át kell adni.
+	alapból csak onCreate() és onUpgrade() esetén használjuk
+	
+Insert:
+	írásra kell az adatbázist foglalni
+		(this.getWritableDatabase())
+	
+	kulcs-érték párosokban kell megadni, hogy 
+	melyik oszlophoz milyen paraméterrel szeretnénk felvenni 
+	mezőt ContentValues típúsú objektummal
+	
+	Adatbázis insert függvényét kell meghívni
+		paraméterek: táblaNeve, null, contentvalues.
+		a 2. paraméter segítségével üres sort lehetne beszúrni
+		gyakorlatban nem használjuk.
+		
+		Visszatérési érték: long típúsú
+		érintett sorok számát adja meg
+		-1 ha valamilyen sql hiba történt
+		0 ha nem érintett egy sort sem az insert (insertnél ilyennek nem kéne történnie)
+		beszúrt sorok száma ha sikeres volt az insert. alapból ez az insert csak 1 sor beszúrását támogatja.
+	
+Update:
+	írásra kell az adatbázist foglalni
+	
+	meg kell adni, hogy milyen feltétellel akarunk frissíteni,
+	illetve hogy melyik oszlopot milyen értékre szeretnénk frissíteni
+	ContentValues típúsú objektummal
+	
+	Adatbázis Update függvényét kell meghívni
+		paraméterek: táblaNeve, contenvalues, whereFeltétel, whereParaméterek
+		whereFeltétel egy paraméterezett stringként kell megadni amit a Where kulcsszó után írnánk
+		paraméterek helyére ?-eket kell rakni.
+		whereParaméterek string tömb. a tömbnek annyi eleme van ahány 
+		paraméter (?) van a wherefeltétel-ben a ?-ek helyére sorban írja be
+		az átadott paramétereket
+		
+		Visszatérési érték: long típúsú
+		érintett sorok számát adja meg
+		-1 ha valamilyen sql hiba történt
+		0 ha nem érintett egy sort sem az update. ebben az esetben
+		a feltételünknek egy sor sem felelt meg
+		(nem feltétlenül hiba, ha id volt a feltételben akkor rossz id lett megadva)
+		módosított sorok száma ha sikeres volt az update.
+		
+Delete:
+	írásra kell az adatbázist foglalni
+
+	meg kell adni, azt, hogy mi alapján szeretnénk törölni (általában id)
+	
+	Adatbázis Delete függvényét kell meghívni
+		paraméterek: táblaNeve, whereFeltétel, whereParaméterek
+		wherefeltétel és paraméterek úgy működnek mint az updatenél
+		
+		Visszatérési érték: long típúsú
+		érintett sorok számát adja meg
+		-1 ha valamilyen sql hiba történt
+		0 ha nem érintett egy sort sem az törlés.
+		ebben az esetben a feltételünknek egy sor sem felelt meg
+		(nem feltétlenül hiba, ha id volt a feltételben akkor rossz id lett megadva)
+		törölt sorok száma ha sikeres volt a delete.
+		
+Lekérdezés
+	Olvasásra kell foglalni az adatbázist
+	
+	két módja van, rawQuery és query
+	
+	rawQuery függvény:
+		paraméterek: sqlLekérdezés, sqlParaméterek
+		sqlLekérdezés: a teljes select utasítás, ha az utasítás valamilyen paramétert tartalmaz
+		azt ?-ekkel kell jelölni
+		sqlParaméterek a ?-ek helyére beírt paraméterek String tömbben.
+		
+		visszatérési érték: Cursor típúsú
+		működése egy reader objektuméhoz hasonló
+		alapból az első sor előtt áll
+		moveToNext() függvényének segítségével tudunk a következő (vagy először az első) sorra ugrani
+		a függvény bool értékként adja vissza, hogy sikerült-e új sorra ugrani 
+		így bejárási feltételnek is használható
+		getInt(), getString(), stb. függvényekkel tudjuk az aktuális sorból lekérdezni az adatokat
+		csak az oszlop 0-tól kezdődő indexével tudunk hivatkozni, így a selectet érdemes úgy kiadni,
+		hogy abból tudjuk, hogy hanyadik oszlop melyik értéket tartalmazza.
+		
+	query függvény:
+		a függvénnyel lekérdezést lehet építeni. 
+		paraméterek táblaNeve, oszlopok, whereFeltétel, whereParaméterek, 
+                groupBy, having, orderBy)
+			oszlopok: String tömbben kell felsorolni, hogy melyik oszlopokat szeretnénk kiválaszani
+			wherefeltétel és paraméterek úgy működnek mint az updatenél
+			groupBy, having, orderBy azt kell megadni, hogy mit írnánk az adott kulcsszó után.
+			
+			táblaNeve kivételével minden vehet fel null értéket.
+			null esetén az adott kulcsszó kimarad a lekérdezésből
+			ha az oszlopoknál adunk nullt akkor minden oszlopot lekérdez.		
+			

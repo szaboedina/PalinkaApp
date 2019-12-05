@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context=".MainActivity"
+    android:orientation="vertical">
+
+
+    <Button
+        android:id="@+id/buttonFelvetel"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pálinka felvétel"
+    />
+
+    <Button
+        android:id="@+id/buttonKereses"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pálinka keresése" />
+
+    <Button
+        android:id="@+id/buttonListazas"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:text="Pálinkák listázása" />
+    <TextView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/idResult"
+        android:textSize="25dp"
+        android:maxLines = "999"
+        android:scrollbars = "vertical"
+        />
+
+</LinearLayout>
